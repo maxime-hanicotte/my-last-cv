@@ -1,4 +1,5 @@
 require 'prawn'
+require "fileutils"
 
 module MyLastCV
   class Renderer
@@ -8,7 +9,9 @@ module MyLastCV
     end
 
     def to_pdf(output_path)
+      FileUtils.mkdir_p(File.dirname(output_path))
       Prawn::Document.generate(output_path, **@style.page_options) do |pdf|
+        register_fonts(pdf)
         render_header(pdf)
         render_sections(pdf)
       end
@@ -16,14 +19,35 @@ module MyLastCV
 
     private
 
+    def register_fonts(pdf)
+      fonts_dir = File.expand_path("../../fonts", __dir__)
+      return unless Dir.exist?(fonts_dir)
+
+      # Exemple : Inter (Regular / Bold)
+      pdf.font_families.update(
+        "Inter" => {
+          normal: File.join(fonts_dir, "Inter-Regular.ttf"),
+          bold:   File.join(fonts_dir, "Inter-Bold.ttf")
+        },
+        "Lora" => {
+          normal: File.join(fonts_dir, "Lora-Regular.ttf"),
+          bold:   File.join(fonts_dir, "Lora-Bold.ttf")
+        }
+      )
+    end
+
     def render_header(pdf)
       pdf.font(@style.header_font)
       pdf.move_down 12
-      pdf.text(@parsed_cv[:name] || '-', size: @style.header_size, align: :center)
+      with_color(pdf, @style.accent_color) do
+        pdf.text(@parsed_cv[:name] || '-', size: @style.header_size, align: :center)
+      end
       pdf.move_down 6
       pdf.font(@style.body_font)
       pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :center)
-      pdf.stroke_horizontal_rule
+      with_color(pdf, @style.accent_color) do
+        pdf.stroke_horizontal_rule
+      end
       pdf.move_down 12
     end
 
@@ -38,6 +62,15 @@ module MyLastCV
           pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 16)
         end
       end
+    end
+
+    def with_color(pdf, hex)
+      return yield if hex.to_s.strip.empty?
+      previous = pdf.fill_color
+      pdf.fill_color(hex)
+      yield
+    ensure
+      pdf.fill_color(previous) if previous
     end
   end
 end

@@ -9,5 +9,18 @@ if ARGV.length < 2
 end
 
 input, output = ARGV
-MyLastCV.generate(input, output)
+
+pro = MyLastCV::Style.new(
+  header_font:  "Inter",
+  header_size:  22,
+  section_font: "Inter",
+  section_size: 12,
+  body_font:    "Lora",
+  body_size:    10,
+  page_options: { margin: 36 },
+  accent_color: "1F7AE0" # blue
+)
+
+MyLastCV.generate(input, output, style: pro)
+
 puts "CV généré : #{output}"
