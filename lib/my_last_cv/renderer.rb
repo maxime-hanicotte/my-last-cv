@@ -19,9 +19,21 @@ module MyLastCV
 
     private
 
+    def resolved_fonts_dir
+      candidates = []
+      candidates << @style.fonts_dir if @style.fonts_dir
+      candidates << ENV["MY_LAST_CV_FONTS_DIR"] if ENV["MY_LAST_CV_FONTS_DIR"]
+      candidates << File.join(Dir.pwd, "fonts")
+
+      # fallback if no fonts_dir specified
+      candidates << File.expand_path("../../fonts", __dir__)
+
+      candidates.find { |p| p && Dir.exist?(p) }
+    end
+
     def register_fonts(pdf)
-      fonts_dir = File.expand_path("../../fonts", __dir__)
-      return unless Dir.exist?(fonts_dir)
+      dir = resolved_fonts_dir
+      return unless dir
 
       # Exemple : Inter (Regular / Bold)
       pdf.font_families.update(

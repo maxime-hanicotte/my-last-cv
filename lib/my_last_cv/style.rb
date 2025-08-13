@@ -1,6 +1,6 @@
 module MyLastCV
   class Style
-    attr_reader :header_font, :header_size, :section_font, :section_size, :body_font, :body_size, :page_options, :accent_color
+    attr_reader :header_font, :header_size, :section_font, :section_size, :body_font, :body_size, :page_options, :accent_color, :fonts_dir
 
     def initialize(opts = {})
       @header_font  = opts[:header_font]  || 'Helvetica'
@@ -11,6 +11,7 @@ module MyLastCV
       @body_size    = opts[:body_size]    || 10
       @page_options = opts[:page_options] || { margin: 48 }
       @accent_color = opts[:accent_color] || '000000'
+      @fonts_dir    = opts[:fonts_dir]    # optional
     end
   end
 end
