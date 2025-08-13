@@ -1,3 +1,5 @@
+require_relative "lib/my_last_cv/version"
+
 Gem::Specification.new do |spec|
   spec.name          = "my-last-cv"
   spec.version       = MyLastCV::VERSION rescue "0.0.1"
