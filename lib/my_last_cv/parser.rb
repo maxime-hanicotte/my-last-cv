@@ -13,12 +13,9 @@ module MyLastCV
         next if ligne.strip.empty?
         if (m = ligne.match(/^#\s+(.*)/))
           resultat[:name] = m[1].strip
-        elsif (m = ligne.match(/^email:\s*(.+)/i))
+        elsif (m = ligne.match(/^(email|phone|location):\s*(.+)/i))
           resultat[:contact] ||= []
-          resultat[:contact] << m[1].strip
-        elsif (m = ligne.match(/^location:\s*(.+)/i))
-          resultat[:contact] ||= []
-          resultat[:contact] << m[1].strip
+          resultat[:contact] << m[2].strip
         elsif (m = ligne.match(/^##\s+(.*)/))
           section_actuelle = { title: m[1].strip, items: [] }
           resultat[:sections] << section_actuelle

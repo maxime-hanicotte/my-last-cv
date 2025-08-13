@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Maxime Hanicotte"]
   spec.email         = ["max_hanicotte@msn.com"]
   spec.homepage      = "https://www.maxime.hanicotte.net/my-last-cv/"
-  spec.summary       = "Generate your CV from Mardown to PDF"
+  spec.summary       = "Generate your CV from Markdown to PDF"
   spec.files         = Dir.glob("lib/**/*.rb") + ["exe/my_last_cv", "README.md"]
   spec.bindir        = "exe"
   spec.executables   = ["my_last_cv"]

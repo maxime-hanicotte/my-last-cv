@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
-# Script CLI pour utiliser la gem depuis le terminal.
-# Usage : my_last_cv input.md output.pdf
+
 require 'bundler/setup'
-require_relative '../lib/my_last_cv'
+require 'my_last_cv'
 
 if ARGV.length < 2
   puts "Usage: my_last_cv input.md output.pdf"
