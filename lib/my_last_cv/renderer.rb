@@ -32,8 +32,8 @@ module MyLastCV
     end
 
     def register_fonts(pdf)
-      dir = resolved_fonts_dir
-      return unless dir
+      fonts_dir = resolved_fonts_dir
+      return unless fonts_dir
 
       # Exemple : Inter (Regular / Bold)
       pdf.font_families.update(
