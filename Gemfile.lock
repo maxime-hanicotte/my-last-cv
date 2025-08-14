@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    my-last-cv (0.0.5)
+    my-last-cv (0.0.6)
       prawn (~> 2.5)
 
 GEM
@@ -39,7 +39,7 @@ PLATFORMS
 DEPENDENCIES
   my-last-cv!
   rake (~> 13.3)
-  rspec (~> 3.12)
+  rspec (~> 3.13)
 
 BUNDLED WITH
    2.7.1
