@@ -68,13 +68,29 @@ module MyLastCV
         pdf.move_down 8
         pdf.font(@style.section_font)
         pdf.text(section[:title], size: @style.section_size, style: :bold)
-        pdf.move_down 4
-        pdf.font(@style.body_font)
-        section[:items].each do |item|
-          pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 16)
+
+        unless section[:items].nil? || section[:items].empty?
+          pdf.move_down 4
+          pdf.font(@style.body_font)
+          section[:items].each do |item|
+            pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 16)
+          end
+        end
+
+        (section[:elements] || []).each do |el|
+          pdf.move_down 6
+          pdf.font(@style.section_font)
+          pdf.text(el[:title], size: (@style.section_size - 3), style: :bold)
+
+          pdf.move_down 2
+          pdf.font(@style.body_font)
+          (el[:items] || []).each do |item|
+            pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 20)
+          end
         end
       end
     end
+
 
     def with_color(pdf, hex)
       return yield if hex.to_s.strip.empty?

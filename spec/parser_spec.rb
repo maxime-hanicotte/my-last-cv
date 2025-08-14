@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 RSpec.describe MyLastCV::Parser do
   let(:md) do
     <<~MD
@@ -22,4 +23,28 @@ RSpec.describe MyLastCV::Parser do
     expect(experience).not_to be_nil
     expect(experience[:items]).to include('Société A — Dev', 'Société B — Senior')
   end
+
+  it "manage elements in sections" do
+    md = <<~MD
+      # Jean
+      email: j@example.com
+
+      ## Expérience
+      - Ligne de section
+
+      ### Projets
+      - A
+      - B
+
+      ### Récompenses
+      - Prix X
+    MD
+
+    parsed = described_class.new(md).parse
+    experience = parsed[:sections].find { |s| s[:title] == "Expérience" }
+    expect(experience[:items]).to include("Ligne de section")
+    expect(experience[:elements].map { |e| e[:title] }).to eq(["Projets", "Récompenses"])
+    expect(experience[:elements].first[:items]).to eq(["A", "B"])
+  end
+
 end
