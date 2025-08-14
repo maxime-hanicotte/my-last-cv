@@ -1,5 +1,5 @@
 require 'prawn'
-require "fileutils"
+require 'fileutils'
 
 module MyLastCV
   class Renderer
@@ -57,6 +57,17 @@ module MyLastCV
       pdf.move_down 6
       pdf.font(@style.body_font)
       pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :center)
+
+      if @parsed_cv[:intro]&.any?
+        pdf.move_down 10
+        @parsed_cv[:intro].each do |p|
+          pdf.text(p, size: @style.body_size, leading: 2)
+          pdf.move_down 4
+        end
+      else
+        pdf.move_down 4
+      end
+
       with_color(pdf, @style.accent_color) do
         pdf.stroke_horizontal_rule
       end
@@ -64,33 +75,41 @@ module MyLastCV
     end
 
     def render_sections(pdf)
-      @parsed_cv[:sections].each do |section|
+      (@parsed_cv[:sections] || []).each do |section|
         pdf.move_down 8
         pdf.font(@style.section_font)
         pdf.text(section[:title], size: @style.section_size, style: :bold)
 
-        unless section[:items].nil? || section[:items].empty?
-          pdf.move_down 4
-          pdf.font(@style.body_font)
-          section[:items].each do |item|
-            pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 16)
-          end
-        end
+        render_items(pdf, section[:items])
 
         (section[:elements] || []).each do |el|
           pdf.move_down 6
           pdf.font(@style.section_font)
           pdf.text(el[:title], size: (@style.section_size - 3), style: :bold)
-
-          pdf.move_down 2
-          pdf.font(@style.body_font)
-          (el[:items] || []).each do |item|
-            pdf.text("• #{item}", size: @style.body_size, indent_paragraphs: 20)
-          end
+          render_items(pdf, el[:items])
         end
       end
     end
 
+    def render_items(pdf, items)
+      return if items.nil? || items.empty?
+
+      pdf.move_down 4
+      pdf.font(@style.body_font)
+
+      (items || []).each do |item|
+        case item[:type]
+        when :bullet
+          pdf.text("• #{item[:text]}", size: @style.body_size, indent_paragraphs: 16)
+        when :paragraph
+          pdf.text(item[:text], size: @style.body_size, leading: 2)
+          pdf.move_down 4
+        else
+          # fallback (au cas où)
+          pdf.text(item.to_s, size: @style.body_size)
+        end
+      end
+    end
 
     def with_color(pdf, hex)
       return yield if hex.to_s.strip.empty?
