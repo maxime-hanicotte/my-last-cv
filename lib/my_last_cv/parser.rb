@@ -5,58 +5,112 @@ module MyLastCV
     end
 
     def parse
-      lignes = @markdown.lines.map(&:chomp)
-      resultat = { sections: [] }
-      section_actuelle = nil
-      element_actuel  = nil
+      lines = @markdown.lines.map(&:chomp)
+      result = { sections: [] }
 
-      lignes.each do |ligne|
-        line = ligne
+      current_section = nil
+      current_element = nil
+
+      # buffer
+      pending = []
+
+      # helpers
+      flush_pending_to = lambda do |target|
+        return if pending.empty?
+        text = pending.join(" ").strip
+        pending.clear
+        return if text.empty?
+        target[:items] ||= []
+        target[:items] << { type: :paragraph, text: text }
+      end
+
+      flush_pending_nowhere = lambda do
+        return if pending.empty?
+        text = pending.join(" ").strip
+        pending.clear
+        return if text.empty?
+        result[:intro] ||= []
+        result[:intro] << text
+      end
+
+      lines.each do |raw|
+        line = raw.rstrip
         next if line.strip.empty?
 
-        if (m = line.match(/^#\s+(.*)/))
-          resultat[:name] = m[1].strip
-          section_actuelle = nil
-          element_actuel   = nil
+        if (m = line.match(/^#\s+(.*)/)) # New header
+          if current_element
+            flush_pending_to.call(current_element)
+          elsif current_section
+            flush_pending_to.call(current_section)
+          else
+            flush_pending_nowhere.call
+          end
+
+          result[:name] = m[1].strip
+          current_section = nil
+          current_element = nil
 
         elsif (m = line.match(/^(email|phone|location):\s*(.+)/i))
-          (resultat[:contact] ||= []) << m[2].strip
+          (result[:contact] ||= []) << m[2].strip
 
-        elsif (m = line.match(/^##\s+(.*)/))
-          section_actuelle = { title: m[1].strip, items: [], elements: [] }
-          resultat[:sections] << section_actuelle
-          element_actuel = nil
-
-        elsif (m = line.match(/^###\s+(.*)/))
-          section_actuelle ||= { title: "Divers", items: [], elements: [] }
-          resultat[:sections] << section_actuelle unless resultat[:sections].include?(section_actuelle)
-
-          element_actuel = { title: m[1].strip, items: [] }
-          section_actuelle[:elements] ||= []
-          section_actuelle[:elements] << element_actuel
-
-        elsif (m = line.match(/^[-*]\s+(.*)/))
-          if element_actuel
-            element_actuel[:items] << m[1].strip
+        elsif (m = line.match(/^##\s+(.*)/)) # New section
+          if current_element
+            flush_pending_to.call(current_element)
+          elsif current_section
+            flush_pending_to.call(current_section)
           else
-            section_actuelle ||= { title: "Divers", items: [], elements: [] }
-            resultat[:sections] << section_actuelle unless resultat[:sections].include?(section_actuelle)
-            section_actuelle[:items] << m[1].strip
+            flush_pending_nowhere.call
           end
+
+          current_section = { title: m[1].strip, items: [], elements: [] }
+          result[:sections] << current_section
+          current_element = nil
+
+        elsif (m = line.match(/^###\s+(.*)/)) # New element
+          if current_element
+            flush_pending_to.call(current_element)
+          elsif current_section
+            flush_pending_to.call(current_section)
+          else
+            flush_pending_nowhere.call
+          end
+
+          current_section ||= { title: "Divers", items: [], elements: [] }
+          result[:sections] << current_section unless result[:sections].include?(current_section)
+
+          current_element = { title: m[1].strip, items: [] }
+          current_section[:elements] ||= []
+          current_section[:elements] << current_element
+
+        elsif (m = line.match(/^[-*]\s+(.*)/)) # Bullet point
+          item = { type: :bullet, text: m[1].strip }
+          if current_element
+            flush_pending_to.call(current_element)
+            current_element[:items] << item
+          elsif current_section
+            flush_pending_to.call(current_section)
+            current_section[:items] << item
+          else
+            current_section = { title: "Divers", items: [item], elements: [] }
+            result[:sections] << current_section
+          end
+
         else
-          if element_actuel && !element_actuel[:items].empty?
-            element_actuel[:items][-1] += " " + line.strip
-          elsif section_actuelle && !section_actuelle[:items].empty?
-            section_actuelle[:items][-1] += " " + line.strip
-          else
-            section_actuelle ||= { title: "Divers", items: [], elements: [] }
-            section_actuelle[:items] << line.strip
-          end
+          pending << line.strip
         end
       end
 
-      resultat[:contact] = (resultat[:contact] || []).join(" · ")
-      resultat
+      # End of parsing, flush any remaining pending text
+      if current_element
+        flush_pending_to.call(current_element)
+      elsif current_section
+        flush_pending_to.call(current_section)
+      else
+        flush_pending_nowhere.call
+      end
+
+      result[:contact] = (result[:contact] || []).join(" · ")
+      result
     end
   end
 end
