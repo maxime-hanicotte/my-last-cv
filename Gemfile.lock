@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    my-last-cv (0.0.4)
+    my-last-cv (0.0.5)
       prawn (~> 2.5)
 
 GEM
