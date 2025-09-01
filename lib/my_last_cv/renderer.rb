@@ -57,28 +57,28 @@ module MyLastCV
       pdf.move_down 6
       pdf.font(@style.body_font)
       pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :center)
+      pdf.move_down 4
+
+      pdf.stroke_color(@style.accent_color)
+      pdf.stroke_horizontal_rule
 
       if @parsed_cv[:intro]&.any?
         pdf.move_down 10
         @parsed_cv[:intro].each do |p|
           pdf.text(p, size: @style.body_size, leading: 2)
-          pdf.move_down 4
         end
-      else
-        pdf.move_down 4
       end
-
-      with_color(pdf, @style.accent_color) do
-        pdf.stroke_horizontal_rule
-      end
-      pdf.move_down 12
+      pdf.move_down 10
     end
 
     def render_sections(pdf)
       (@parsed_cv[:sections] || []).each do |section|
         pdf.move_down 8
         pdf.font(@style.section_font)
-        pdf.text(section[:title], size: @style.section_size, style: :bold)
+
+        with_color(pdf, @style.accent_color) do
+          pdf.text(section[:title], size: @style.section_size, style: :bold)
+        end
 
         render_items(pdf, section[:items])
 
