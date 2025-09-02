@@ -49,16 +49,17 @@ module MyLastCV
     end
 
     def render_header(pdf)
-      pdf.font(@style.header_font)
       pdf.move_down 12
-      with_color(pdf, @style.accent_color) do
-        pdf.text(@parsed_cv[:name] || '-', size: @style.header_size, align: :center)
-      end
-      pdf.move_down 6
       pdf.font(@style.body_font)
-      pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :center)
-      pdf.move_down 4
+      pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :left)
 
+      pdf.move_down 6
+      pdf.font(@style.header_font)
+      with_color(pdf, @style.accent_color) do
+        pdf.text(@parsed_cv[:title] || '-', size: @style.header_size, align: :center)
+      end
+
+      pdf.move_down 4
       pdf.stroke_color(@style.accent_color)
       pdf.stroke_horizontal_rule
 

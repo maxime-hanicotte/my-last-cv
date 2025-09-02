@@ -1,14 +1,18 @@
+require 'yaml'
+
 module MyLastCV
   class Parser
     LineHandler = Struct.new(:pattern, :method)
 
     HANDLERS = [
-      LineHandler.new(/^#\s+(.*)/, :handle_name),
-      LineHandler.new(/^(email|phone|location):\s*(.+)/i, :handle_contact),
+      LineHandler.new(/^(name|title|email|phone|linkedin|github|website|location):\s*(.+)/i, :handle_contact),
+      LineHandler.new(/^#\s+(.*)/, :handle_title),
       LineHandler.new(/^##\s+(.*)/, :handle_section),
       LineHandler.new(/^###\s+(.*)/, :handle_element),
       LineHandler.new(/^[-*]\s+(.*)/, :handle_bullet)
     ].freeze
+
+    CONTACT_KEYS = %w[name title email phone linkedin github website location].freeze
 
     def initialize(markdown)
       @markdown = markdown
@@ -16,9 +20,12 @@ module MyLastCV
 
     def parse
       setup_state
+      extract_front_matter!
       @markdown.each_line do |raw|
         line = raw.rstrip
-        next if line.strip.empty?
+
+        stripped = line.strip
+        next if stripped.empty? || stripped == '---'
 
         handler = HANDLERS.find { |h| h.pattern.match?(line) }
         if handler
@@ -29,7 +36,7 @@ module MyLastCV
       end
 
       finalize
-      @result[:contact] = (@result[:contact] || []).join(" · ")
+      @result[:contact] = (@result[:contact] || []).join("\n")
       @result
     end
 
@@ -40,6 +47,39 @@ module MyLastCV
       @current_section = nil
       @current_element = nil
       @pending = []
+    end
+
+    def extract_front_matter!
+      lines = @markdown.lines
+      return if lines.empty?
+      return unless lines.first&.strip == '---'
+
+      closing_index = lines[1..]&.find_index { |l| l.strip == '---' }
+      return unless closing_index
+
+      closing_index += 1
+
+      yaml_content = lines[1...closing_index].join
+      rest = lines[(closing_index + 1)..] || []
+
+      begin
+        data = YAML.safe_load(yaml_content) || {}
+      rescue StandardError
+        data = {}
+      end
+
+      if data.is_a?(Hash)
+        # Prefer explicit YAML title if present
+        @result[:title] = data['title'].to_s.strip unless data['title'].to_s.strip.empty?
+
+        CONTACT_KEYS.each do |k|
+          v = data[k]
+          next if v.nil? || v.to_s.strip.empty?
+          (@result[:contact] ||= []) << v.to_s.strip
+        end
+      end
+
+      @markdown = rest.join
     end
 
     def flush_pending_to(target)
@@ -79,9 +119,9 @@ module MyLastCV
       end
     end
 
-    def handle_name(line)
+    def handle_title(line)
       flush_pending_current
-      @result[:name] = line.sub(/^#\s+/, "").strip
+      @result[:title] = line.sub(/^#\s+/, "").strip
       @current_section = nil
       @current_element = nil
     end
@@ -126,4 +166,3 @@ module MyLastCV
     end
   end
 end
-
