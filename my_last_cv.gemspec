@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "prawn", "~> 2.5"
+  spec.add_runtime_dependency "prawn-icon", "~> 4.1"
 
   spec.add_development_dependency "rake", "~> 13.3"
   spec.add_development_dependency "rspec", "~> 3.13"

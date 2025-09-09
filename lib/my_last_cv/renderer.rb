@@ -1,5 +1,7 @@
 require 'prawn'
+require 'prawn/icon'
 require 'fileutils'
+require_relative 'icons'
 
 module MyLastCV
   class Renderer
@@ -35,7 +37,7 @@ module MyLastCV
       fonts_dir = resolved_fonts_dir
       return unless fonts_dir
 
-      # Exemple : Inter (Regular / Bold)
+      # Example : Inter (Regular / Bold)
       pdf.font_families.update(
         "Inter" => {
           normal: File.join(fonts_dir, "Inter-Regular.ttf"),
@@ -51,7 +53,10 @@ module MyLastCV
     def render_header(pdf)
       pdf.move_down 12
       pdf.font(@style.body_font)
-      pdf.text(@parsed_cv[:contact] || '', size: @style.body_size, align: :left)
+      @parsed_cv[:contact].each_key do |key|
+        icon = "<icon size=\"#{@style.body_size}\">#{MyLastCV::Icons::MAP[key.to_sym]}</icon>"
+        pdf.icon("#{icon}  #{@parsed_cv[:contact][key]}", inline_format: true)
+      end
 
       pdf.move_down 6
       pdf.font(@style.header_font)

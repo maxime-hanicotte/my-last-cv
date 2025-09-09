@@ -36,7 +36,6 @@ module MyLastCV
       end
 
       finalize
-      @result[:contact] = (@result[:contact] || []).join("\n")
       @result
     end
 
@@ -75,7 +74,8 @@ module MyLastCV
         CONTACT_KEYS.each do |k|
           v = data[k]
           next if v.nil? || v.to_s.strip.empty?
-          (@result[:contact] ||= []) << v.to_s.strip
+          @result[:contact] ||= {}
+          @result[:contact][k] = v.to_s.strip
         end
       end
 
@@ -127,8 +127,9 @@ module MyLastCV
     end
 
     def handle_contact(line)
-      _, value = line.split(":", 2)
-      (@result[:contact] ||= []) << value.strip
+      key, value = line.split(":", 2)
+      @result[:contact] ||= {}
+      @result[:contact][key] = value.strip
     end
 
     def handle_section(line)
