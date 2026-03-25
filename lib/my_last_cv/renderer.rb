@@ -53,9 +53,10 @@ module MyLastCV
     def render_header(pdf)
       pdf.move_down 12
       pdf.font(@style.body_font)
-      @parsed_cv[:contact].each_key do |key|
+      contact = @parsed_cv[:contact] || {}
+      contact.each_key do |key|
         icon = "<icon size=\"#{@style.body_size}\">#{MyLastCV::Icons::MAP[key.to_sym]}</icon>"
-        pdf.icon("#{icon}  #{@parsed_cv[:contact][key]}", inline_format: true)
+        pdf.icon("#{icon}  #{contact[key]}", inline_format: true)
       end
 
       pdf.move_down 6
