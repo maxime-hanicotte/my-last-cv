@@ -129,7 +129,8 @@ module MyLastCV
     def handle_contact(line)
       key, value = line.split(":", 2)
       @result[:contact] ||= {}
-      @result[:contact][key] = value.strip
+      normalized_key = key.to_s.strip.downcase
+      @result[:contact][normalized_key] = value.to_s.strip
     end
 
     def handle_section(line)

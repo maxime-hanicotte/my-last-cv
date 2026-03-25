@@ -75,4 +75,20 @@ RSpec.describe MyLastCV::Parser do
     expect(proj[:items][1]).to eq(type: :bullet, text: "Développement de la gem")
     expect(proj[:items][2]).to eq(type: :bullet, text: "Mise en production")
   end
+
+  it "normalise les cles de contact en minuscules" do
+    md = <<~MD
+      # Jean
+      Email: j@example.com
+      PHONE: +33 6 00 00 00 00
+      LinkedIn: https://linkedin.com/in/jean
+    MD
+
+    parsed = described_class.new(md).parse
+
+    expect(parsed[:contact].keys).to include("email", "phone", "linkedin")
+    expect(parsed[:contact]["email"]).to eq("j@example.com")
+    expect(parsed[:contact]["phone"]).to eq("+33 6 00 00 00 00")
+    expect(parsed[:contact]["linkedin"]).to eq("https://linkedin.com/in/jean")
+  end
 end
