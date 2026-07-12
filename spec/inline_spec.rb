@@ -22,4 +22,10 @@ RSpec.describe MyLastCV::Inline do
 
     expect(parsed).to eq("*pas italique* [texte] `code` \\")
   end
+
+  it 'keeps empty or unclosed emphasis literal' do
+    parsed = described_class.parse('**** and **broken')
+
+    expect(parsed).to eq('**** and **broken')
+  end
 end

@@ -92,7 +92,7 @@ RSpec.describe MyLastCV::Parser do
     expect(parsed[:contact]["linkedin"]).to eq("https://linkedin.com/in/jean")
   end
 
-  it "parse le markdown inline dans les contacts, paragraphes et puces" do
+  it "parses inline markdown in contacts, paragraphs, and bullets" do
     md = <<~MD
       # Jean
       website: [Portfolio](https://example.com)
