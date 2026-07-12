@@ -3,7 +3,7 @@ require 'cgi'
 module MyLastCV
   class Inline
     LINK_COLOR = '0563C1'.freeze
-    ESCAPABLE_CHARACTERS = "\\`*[]()".chars.freeze
+    ESCAPABLE_CHARACTERS = "`*[]()".chars.freeze
 
     def self.parse(text)
       new(text).parse
@@ -48,7 +48,7 @@ module MyLastCV
     end
 
     def escaped_character?
-      current_character == '\\' && ESCAPABLE_CHARACTERS.include?(next_character)
+      current_character == '\\' && (next_character == '\\' || ESCAPABLE_CHARACTERS.include?(next_character))
     end
 
     def consume_escaped_character
