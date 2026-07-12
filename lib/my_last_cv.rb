@@ -1,4 +1,5 @@
 require_relative 'my_last_cv/version'
+require_relative 'my_last_cv/inline'
 require_relative 'my_last_cv/parser'
 require_relative 'my_last_cv/style'
 require_relative 'my_last_cv/renderer'
