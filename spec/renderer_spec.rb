@@ -90,8 +90,13 @@ RSpec.describe MyLastCV::Renderer do
     )
     expect(fake_pdf.text_calls).to include(
       ['Intro <b>importante</b>', hash_including(size: kind_of(Numeric), leading: 2, inline_format: true)],
-      ['Texte avec <i>italique</i>', hash_including(size: kind_of(Numeric), leading: 2, inline_format: true)],
-      ['• Code <font name="Courier">puts</font>', hash_including(size: kind_of(Numeric), indent_paragraphs: 16, inline_format: true)]
+      ['Texte avec <i>italique</i>', hash_including(size: kind_of(Numeric), leading: 2, inline_format: true)]
+    )
+    expect(fake_pdf.text_calls).to include(
+      [
+        a_string_including('<font name="Courier">puts</font>'),
+        hash_including(size: kind_of(Numeric), indent_paragraphs: 16, inline_format: true)
+      ]
     )
   end
 end

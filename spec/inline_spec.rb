@@ -18,8 +18,8 @@ RSpec.describe MyLastCV::Inline do
   end
 
   it 'keeps escaped markdown characters literal' do
-    parsed = described_class.parse('\*pas italique\* \[texte\] \`code\`')
+    parsed = described_class.parse('\*pas italique\* \[texte\] \`code\` \\')
 
-    expect(parsed).to eq('*pas italique* [texte] `code`')
+    expect(parsed).to eq("*pas italique* [texte] `code` \\")
   end
 end
