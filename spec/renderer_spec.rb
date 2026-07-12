@@ -2,40 +2,42 @@ require 'spec_helper'
 require 'tmpdir'
 
 RSpec.describe MyLastCV::Renderer do
-  class FakePdf
-    attr_reader :text_calls, :icon_calls, :font_families
+  let(:fake_pdf) do
+    Class.new do
+      attr_reader :text_calls, :icon_calls, :font_families
 
-    def initialize
-      @text_calls = []
-      @icon_calls = []
-      @font_families = {}
-      @fill_color = '000000'
-      @stroke_color = '000000'
-    end
+      def initialize
+        @text_calls = []
+        @icon_calls = []
+        @font_families = {}
+        @fill_color = '000000'
+        @stroke_color = '000000'
+      end
 
-    def move_down(*); end
-    def font(*); end
-    def stroke_horizontal_rule; end
+      def move_down(*); end
+      def font(*); end
+      def stroke_horizontal_rule; end
 
-    def text(content, **options)
-      @text_calls << [content, options]
-    end
+      def text(content, **options)
+        @text_calls << [content, options]
+      end
 
-    def icon(content, **options)
-      @icon_calls << [content, options]
-    end
+      def icon(content, **options)
+        @icon_calls << [content, options]
+      end
 
-    def fill_color(value = nil)
-      return @fill_color if value.nil?
+      def fill_color(value = nil)
+        return @fill_color if value.nil?
 
-      @fill_color = value
-    end
+        @fill_color = value
+      end
 
-    def stroke_color(value = nil)
-      return @stroke_color if value.nil?
+      def stroke_color(value = nil)
+        return @stroke_color if value.nil?
 
-      @stroke_color = value
-    end
+        @stroke_color = value
+      end
+    end.new
   end
 
   it 'renders a PDF when contact is missing' do
@@ -62,22 +64,21 @@ RSpec.describe MyLastCV::Renderer do
     parsed_cv = {
       title: 'Jean Dupont',
       contact: {
-        'website' => '<color rgb="0563C1"><u><link href="https://example.com">Portfolio</link></u></color>'
+        'website' => '[Portfolio](https://example.com)'
       },
-      intro: ['Intro <b>importante</b>'],
+      intro: ['Intro **importante**'],
       sections: [
         {
           title: 'Experience',
           items: [
-            { type: :paragraph, text: 'Texte avec <i>italique</i>' },
-            { type: :bullet, text: 'Code <font name="Courier">puts</font>' }
+            { type: :paragraph, text: 'Texte avec *italique*' },
+            { type: :bullet, text: 'Code `puts`' }
           ],
           elements: []
         }
       ]
     }
 
-    fake_pdf = FakePdf.new
     allow(Prawn::Document).to receive(:generate).and_yield(fake_pdf)
 
     described_class.new(parsed_cv).to_pdf('/tmp/cv.pdf')
