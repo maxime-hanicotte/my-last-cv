@@ -75,7 +75,7 @@ module MyLastCV
           v = data[k]
           next if v.nil? || v.to_s.strip.empty?
           @result[:contact] ||= {}
-          @result[:contact][k] = parse_inline(v.to_s.strip)
+          @result[:contact][k] = v.to_s.strip
         end
       end
 
@@ -88,7 +88,7 @@ module MyLastCV
       @pending.clear
       return if text.empty?
       target[:items] ||= []
-      target[:items] << { type: :paragraph, text: parse_inline(text) }
+      target[:items] << { type: :paragraph, text: text }
     end
 
     def flush_pending_nowhere
@@ -96,7 +96,7 @@ module MyLastCV
       text = @pending.join(" ").strip
       @pending.clear
       return if text.empty?
-      (@result[:intro] ||= []) << parse_inline(text)
+      (@result[:intro] ||= []) << text
     end
 
     def finalize
@@ -130,7 +130,7 @@ module MyLastCV
       key, value = line.split(":", 2)
       @result[:contact] ||= {}
       normalized_key = key.to_s.strip.downcase
-      @result[:contact][normalized_key] = parse_inline(value.to_s.strip)
+      @result[:contact][normalized_key] = value.to_s.strip
     end
 
     def handle_section(line)
@@ -150,7 +150,7 @@ module MyLastCV
     end
 
     def handle_bullet(line)
-      item = { type: :bullet, text: parse_inline(line.sub(/^[-*]\s+/, "").strip) }
+      item = { type: :bullet, text: line.sub(/^[-*]\s+/, "").strip }
       if @current_element
         flush_pending_to(@current_element)
         @current_element[:items] << item
@@ -165,10 +165,6 @@ module MyLastCV
 
     def handle_text(line)
       @pending << line.strip
-    end
-
-    def parse_inline(text)
-      Inline.parse(text)
     end
   end
 end

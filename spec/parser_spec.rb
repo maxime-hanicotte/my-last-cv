@@ -92,7 +92,7 @@ RSpec.describe MyLastCV::Parser do
     expect(parsed[:contact]["linkedin"]).to eq("https://linkedin.com/in/jean")
   end
 
-  it "parses inline markdown in contacts, paragraphs, and bullets" do
+  it "preserves raw inline markdown in contacts, paragraphs, and bullets" do
     md = <<~MD
       # Jean
       website: [Portfolio](https://example.com)
@@ -105,14 +105,14 @@ RSpec.describe MyLastCV::Parser do
     parsed = described_class.new(md).parse
     experience = parsed[:sections].find { |s| s[:title] == "Expérience" }
 
-    expect(parsed[:contact]["website"]).to eq('<color rgb="0563C1"><u><link href="https://example.com">Portfolio</link></u></color>')
+    expect(parsed[:contact]["website"]).to eq('[Portfolio](https://example.com)')
     expect(experience[:items].first).to eq(
       type: :paragraph,
-      text: 'Introduction avec <b>gras</b>, <i>italique</i> et <font name="Courier">code</font>.'
+      text: 'Introduction avec **gras**, *italique* et `code`.'
     )
     expect(experience[:items][1]).to eq(
       type: :bullet,
-      text: 'Livraison de <color rgb="0563C1"><u><link href="https://example.com/features">features</link></u></color>'
+      text: 'Livraison de [features](https://example.com/features)'
     )
   end
 end
