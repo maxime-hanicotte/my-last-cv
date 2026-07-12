@@ -72,7 +72,7 @@ module MyLastCV
       if @parsed_cv[:intro]&.any?
         pdf.move_down 10
         @parsed_cv[:intro].each do |p|
-          pdf.text(p, size: @style.body_size, leading: 2)
+          pdf.text(p, size: @style.body_size, leading: 2, inline_format: true)
         end
       end
       pdf.move_down 10
@@ -107,9 +107,9 @@ module MyLastCV
       (items || []).each do |item|
         case item[:type]
         when :bullet
-          pdf.text("• #{item[:text]}", size: @style.body_size, indent_paragraphs: 16)
+          pdf.text("• #{item[:text]}", size: @style.body_size, indent_paragraphs: 16, inline_format: true)
         when :paragraph
-          pdf.text(item[:text], size: @style.body_size, leading: 2)
+          pdf.text(item[:text], size: @style.body_size, leading: 2, inline_format: true)
           pdf.move_down 4
         else
           # fallback (au cas où)

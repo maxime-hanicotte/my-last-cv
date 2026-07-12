@@ -12,3 +12,6 @@ bundle exec my_last_cv sample/cv.md output/cv.pdf
 By default, the gem looks for fonts in `./fonts` of the calling project.
 You can override this with `Style.new(fonts_dir: "/path/to/fonts")`
 or `MY_LAST_CV_FONTS_DIR=/path/to/fonts`.
+
+## Inline Markdown support
+Text content in contact fields, paragraphs, and bullet items supports inline Markdown for `**bold**`, `*italic*`, `` `code` ``, and `[links](https://example.com)`.
