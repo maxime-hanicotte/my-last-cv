@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.licenses       = ["GPL-3.0-or-later"]
   spec.required_ruby_version = ">= 3.0"
 
-  spec.files         = Dir.glob("lib/**/*.rb") + ["exe/my_last_cv", "README.md"]
+  spec.files         = Dir.glob("lib/**/*.rb") + Dir.glob("fonts/*.{ttf,otf}") + ["exe/my_last_cv", "README.md"]
   spec.bindir        = "exe"
   spec.executables   = ["my_last_cv"]
   spec.require_paths = ["lib"]
