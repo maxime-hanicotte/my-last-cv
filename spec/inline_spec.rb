@@ -28,4 +28,18 @@ RSpec.describe MyLastCV::Inline do
 
     expect(parsed).to eq('**** and **broken')
   end
+
+  it 'preserves balanced parentheses in link destinations' do
+    parsed = described_class.parse('[wiki](https://en.wikipedia.org/wiki/Function_(mathematics))')
+
+    expect(parsed).to eq(
+      '<color rgb="0563C1"><u><link href="https://en.wikipedia.org/wiki/Function_(mathematics)">wiki</link></u></color>'
+    )
+  end
+
+  it 'keeps links with unclosed destinations literal' do
+    parsed = described_class.parse('[wiki](https://example.com/path_(unfinished)')
+
+    expect(parsed).to eq('[wiki](https://example.com/path_(unfinished)')
+  end
 end
