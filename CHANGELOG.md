@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.8] - 2026-10-27
+### Added
+- Support inline Markdown formatting for bold, italic, code, and links in contact details, paragraphs, and list items.
+
+### Changed
+- Include bundled font files in the published gem.
+- Expand the README with usage instructions and font customization details.
+
+### Fixed
+- Normalize contact keys to lowercase so they are rendered consistently.
+- Handle links with balanced parentheses and incomplete destinations more reliably.
+
 ## [0.0.7] - 2025-09-09
 ### Added
 - Support prawn-icon for contact data
