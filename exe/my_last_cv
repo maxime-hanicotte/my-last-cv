@@ -12,12 +12,12 @@ input, output = ARGV
 
 pro = MyLastCV::Style.new(
   header_font:  "Inter",
-  header_size:  22,
+  header_size:  20,
   section_font: "Inter",
-  section_size: 12,
+  section_size: 11,
   body_font:    "Lora",
-  body_size:    10,
-  page_options: { margin: 36 },
+  body_size:    9,
+  page_options: { margin: 30 },
   accent_color: "1F7AE0" # blue
 )
 

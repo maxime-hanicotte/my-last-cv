@@ -59,15 +59,17 @@ module MyLastCV
     end
 
     def render_header(pdf)
-      pdf.move_down 12
+      pdf.move_down 4
       pdf.font(@style.body_font)
       contact = @parsed_cv[:contact] || {}
-      contact.each_key do |key|
+      contact.each do |key, value|
+        next if redundant_contact_field?(key, value)
+
         icon = "<icon size=\"#{@style.body_size}\">#{MyLastCV::Icons::MAP[key.to_sym]}</icon>"
-        pdf.icon("#{icon}  #{Inline.parse(contact[key])}", inline_format: true)
+        pdf.icon("#{icon}  #{Inline.parse(value)}", inline_format: true)
       end
 
-      pdf.move_down 6
+      pdf.move_down 2
       pdf.font(@style.header_font)
       with_color(pdf, @style.accent_color) do
         pdf.text(@parsed_cv[:title] || '-', size: @style.header_size, align: :center)
@@ -78,17 +80,31 @@ module MyLastCV
       pdf.stroke_horizontal_rule
 
       if @parsed_cv[:intro]&.any?
-        pdf.move_down 10
+        pdf.move_down 4
         @parsed_cv[:intro].each do |p|
           pdf.text(Inline.parse(p), size: @style.body_size, leading: 2, inline_format: true)
         end
       end
-      pdf.move_down 10
+      pdf.move_down 4
+    end
+
+    def redundant_contact_field?(key, value)
+      case key
+      when "name"
+        value.to_s.strip.casecmp?(@parsed_cv[:title].to_s.strip)
+      when "title"
+        title = value.to_s.strip
+        Array(@parsed_cv[:intro]).any? do |paragraph|
+          paragraph.to_s.sub(/\A\*+/, "").start_with?(title)
+        end
+      else
+        false
+      end
     end
 
     def render_sections(pdf)
       (@parsed_cv[:sections] || []).each do |section|
-        pdf.move_down 8
+        pdf.move_down 4
         pdf.font(@style.section_font)
 
         with_color(pdf, @style.accent_color) do
@@ -98,7 +114,7 @@ module MyLastCV
         render_items(pdf, section[:items])
 
         (section[:elements] || []).each do |el|
-          pdf.move_down 6
+          pdf.move_down 3
           pdf.font(@style.section_font)
           pdf.text(Inline.parse(el[:title]), size: (@style.section_size - 3), style: :bold, inline_format: true)
           render_items(pdf, el[:items])
@@ -109,7 +125,7 @@ module MyLastCV
     def render_items(pdf, items)
       return if items.nil? || items.empty?
 
-      pdf.move_down 4
+      pdf.move_down 1
       pdf.font(@style.body_font)
 
       (items || []).each do |item|
@@ -118,7 +134,7 @@ module MyLastCV
           pdf.text("• #{Inline.parse(item[:text])}", size: @style.body_size, indent_paragraphs: 16, inline_format: true)
         when :paragraph
           pdf.text(Inline.parse(item[:text]), size: @style.body_size, leading: 2, inline_format: true)
-          pdf.move_down 4
+          pdf.move_down 1
         else
           # fallback (au cas où)
           pdf.text(item.to_s, size: @style.body_size)

@@ -27,6 +27,7 @@ bundle exec my_last_cv path/to/cv.md output/cv.pdf
 
 The output directory is created automatically. The CLI uses the bundled Inter and
 Lora fonts. Start from [`sample/cv.md`](sample/cv.md) to create your document.
+Its compact layout is designed to fit typical CVs on a single page.
 
 ## Markdown format
 
@@ -60,7 +61,9 @@ Introductory paragraph for this role.
 ```
 
 Supported front-matter contact keys are `name`, `title`, `email`, `phone`,
-`linkedin`, `github`, `website`, and `location`. They are rendered with icons.
+`linkedin`, `github`, `website`, and `location`. They are rendered with icons;
+`name` and `title` are omitted from the contact list when they duplicate the
+document heading or introduction.
 
 Text immediately below the main heading becomes the introduction. Section and
 entry content can contain paragraphs and bullet lists. A `###` entry without a

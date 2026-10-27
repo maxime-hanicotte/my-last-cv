@@ -64,9 +64,11 @@ RSpec.describe MyLastCV::Renderer do
     parsed_cv = {
       title: 'Jean Dupont',
       contact: {
+        'name' => 'Jean Dupont',
+        'title' => 'Développeur',
         'website' => '[Portfolio](https://example.com)'
       },
-      intro: ['Intro **importante**'],
+      intro: ['*Développeur* avec **10 ans d’expérience**', 'Intro **importante**'],
       sections: [
         {
           title: 'Work *experience*',
@@ -86,6 +88,12 @@ RSpec.describe MyLastCV::Renderer do
     described_class.new(parsed_cv).to_pdf('/tmp/cv.pdf')
 
     expect(fake_pdf.icon_calls).to include(
+      [
+        a_string_including('<link href="https://example.com">Portfolio</link>'),
+        hash_including(inline_format: true)
+      ]
+    )
+    expect(fake_pdf.icon_calls).to contain_exactly(
       [
         a_string_including('<link href="https://example.com">Portfolio</link>'),
         hash_including(inline_format: true)
