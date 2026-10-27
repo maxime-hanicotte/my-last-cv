@@ -97,15 +97,33 @@ module MyLastCV
       return CGI.escapeHTML(@text[start_index...@index]) unless token?('(')
 
       @index += 1
-      url_start = @index
-      @index += 1 while @index < @text.length && !token?(')')
-      return CGI.escapeHTML(@text[start_index...@index]) if @index >= @text.length
-
-      url = @text[url_start...@index]
-      @index += 1
+      url, closed = parse_link_destination
+      return CGI.escapeHTML(@text[start_index...@index]) unless closed
       return CGI.escapeHTML(@text[start_index...@index]) if url.strip.empty?
 
       %(<color rgb="#{LINK_COLOR}"><u><link href="#{CGI.escapeHTML(url)}">#{label}</link></u></color>)
+    end
+
+    def parse_link_destination
+      start_index = @index
+      depth = 0
+
+      while @index < @text.length
+        if token?('(')
+          depth += 1
+        elsif token?(')')
+          if depth.zero?
+            url = @text[start_index...@index]
+            @index += 1
+            return [url, true]
+          end
+
+          depth -= 1
+        end
+        @index += 1
+      end
+
+      [@text[start_index...@index], false]
     end
 
     def token?(value)
