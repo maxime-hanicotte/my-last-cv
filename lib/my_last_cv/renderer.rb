@@ -92,7 +92,7 @@ module MyLastCV
         pdf.font(@style.section_font)
 
         with_color(pdf, @style.accent_color) do
-          pdf.text(section[:title], size: @style.section_size, style: :bold)
+          pdf.text(Inline.parse(section[:title]), size: @style.section_size, style: :bold, inline_format: true)
         end
 
         render_items(pdf, section[:items])
@@ -100,7 +100,7 @@ module MyLastCV
         (section[:elements] || []).each do |el|
           pdf.move_down 6
           pdf.font(@style.section_font)
-          pdf.text(el[:title], size: (@style.section_size - 3), style: :bold)
+          pdf.text(Inline.parse(el[:title]), size: (@style.section_size - 3), style: :bold, inline_format: true)
           render_items(pdf, el[:items])
         end
       end

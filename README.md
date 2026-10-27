@@ -68,7 +68,7 @@ preceding `##` section is placed in a section named `Divers`.
 
 ## Inline Markdown support
 
-Contact fields, paragraphs, and bullet items support:
+Contact fields, headings, paragraphs, and bullet items support:
 
 - `**bold**`
 - `*italic*`

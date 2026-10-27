@@ -69,12 +69,14 @@ RSpec.describe MyLastCV::Renderer do
       intro: ['Intro **importante**'],
       sections: [
         {
-          title: 'Experience',
+          title: 'Work *experience*',
           items: [
             { type: :paragraph, text: 'Texte avec *italique*' },
             { type: :bullet, text: 'Code `puts`' }
           ],
-          elements: []
+          elements: [
+            { title: 'Senior engineer *(2021–present)*', items: [] }
+          ]
         }
       ]
     }
@@ -92,6 +94,10 @@ RSpec.describe MyLastCV::Renderer do
     expect(fake_pdf.text_calls).to include(
       ['Intro <b>importante</b>', hash_including(size: kind_of(Numeric), leading: 2, inline_format: true)],
       ['Texte avec <i>italique</i>', hash_including(size: kind_of(Numeric), leading: 2, inline_format: true)]
+    )
+    expect(fake_pdf.text_calls).to include(
+      ['Work <i>experience</i>', hash_including(size: kind_of(Numeric), style: :bold, inline_format: true)],
+      ['Senior engineer <i>(2021–present)</i>', hash_including(size: kind_of(Numeric), style: :bold, inline_format: true)]
     )
     expect(fake_pdf.text_calls).to include(
       [
