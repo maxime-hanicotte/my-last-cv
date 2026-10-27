@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.9] - 2026-10-27
+### Added
+- Support italic and bold-italic font variants, with regular and bold fallbacks when variants are unavailable.
+
+### Changed
+- Use a more compact CLI layout for typical one-page CVs.
+
+### Fixed
+- Render inline Markdown in section and entry headings.
+- Avoid repeating contact names and titles already present in the heading or introduction.
+
 ## [0.0.8] - 2026-10-27
 ### Added
 - Support inline Markdown formatting for bold, italic, code, and links in contact details, paragraphs, and list items.

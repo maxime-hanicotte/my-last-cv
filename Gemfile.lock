@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    my-last-cv (0.0.8)
+    my-last-cv (0.0.9)
       prawn (~> 2.5)
       prawn-icon (~> 4.1)
 
