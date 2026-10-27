@@ -106,7 +106,9 @@ also be supplied.
 
 Inter and Lora are bundled with the gem. To override them, provide a directory
 containing `Inter-Regular.ttf`, `Inter-Bold.ttf`, `Lora-Regular.ttf`, and
-`Lora-Bold.ttf`:
+`Lora-Bold.ttf`. Optional `Inter-Italic.ttf`, `Inter-BoldItalic.ttf`,
+`Lora-Italic.ttf`, and `Lora-BoldItalic.ttf` files enable matching italic
+styles; missing variants fall back to their regular or bold face.
 
 ```ruby
 MyLastCV::Style.new(fonts_dir: "/path/to/fonts")

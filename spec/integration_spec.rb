@@ -28,10 +28,11 @@ RSpec.describe 'MyLastCV integration' do
   it 'generates a PDF with inline markdown formatting and embeds links' do
     markdown = <<~MD
       # Jane Doe
+      An *italic* introduction.
       website: [Portfolio](https://example.com)
 
       ## Experience
-      Paragraph with **bold**, *italic*, and `code`.
+      Paragraph with **bold**, *italic*, ***bold italic***, and `code`.
       - Built [features](https://example.com/features)
     MD
 
@@ -39,9 +40,14 @@ RSpec.describe 'MyLastCV integration' do
       input_path = File.join(dir, 'cv.md')
       output_path = File.join(dir, 'cv.pdf')
       File.write(input_path, markdown)
+      style = MyLastCV::Style.new(
+        header_font: 'Inter',
+        section_font: 'Inter',
+        body_font: 'Lora'
+      )
 
       expect do
-        MyLastCV.generate(input_path, output_path)
+        MyLastCV.generate(input_path, output_path, style: style)
       end.not_to raise_error
 
       pdf = File.binread(output_path)

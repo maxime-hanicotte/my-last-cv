@@ -38,17 +38,24 @@ module MyLastCV
       fonts_dir = resolved_fonts_dir
       return unless fonts_dir
 
-      # Example : Inter (Regular / Bold)
       pdf.font_families.update(
-        "Inter" => {
-          normal: File.join(fonts_dir, "Inter-Regular.ttf"),
-          bold:   File.join(fonts_dir, "Inter-Bold.ttf")
-        },
-        "Lora" => {
-          normal: File.join(fonts_dir, "Lora-Regular.ttf"),
-          bold:   File.join(fonts_dir, "Lora-Bold.ttf")
-        }
+        "Inter" => font_family_files(fonts_dir, "Inter"),
+        "Lora" => font_family_files(fonts_dir, "Lora")
       )
+    end
+
+    def font_family_files(fonts_dir, family)
+      regular = File.join(fonts_dir, "#{family}-Regular.ttf")
+      bold = File.join(fonts_dir, "#{family}-Bold.ttf")
+      italic = File.join(fonts_dir, "#{family}-Italic.ttf")
+      bold_italic = File.join(fonts_dir, "#{family}-BoldItalic.ttf")
+
+      {
+        normal: regular,
+        bold: bold,
+        italic: File.file?(italic) ? italic : regular,
+        bold_italic: File.file?(bold_italic) ? bold_italic : bold
+      }
     end
 
     def render_header(pdf)

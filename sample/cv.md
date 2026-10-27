@@ -17,6 +17,12 @@ location: "Paris, France"
 ## Profile
 Passionate developer specialized in Ruby and Ruby on Rails, with strong expertise in building scalable web applications. Enthusiastic about clean code, performance optimization, and delivering user-focused solutions.
 
+website: [Portfolio](https://example.com)
+
+## Experience
+Paragraph with **bold**, *italic*, and `code`.
+- Built [features](https://example.com/features)
+
 ---
 
 ## Skills
